@@ -1,19 +1,18 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import {
   Home,
   Sparkles,
   Crosshair,
   ScrollText,
-  Gamepad2,
+  LayoutDashboard,
   HelpCircle,
   Settings,
-  Clipboard,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { cn } from "@/lib/utils";
-import SettingsModal from "./settingsModal"; // Import the SettingsModal component
+import SettingsModal from "./settingsModal";
 
 interface LinkItemProps {
   to: string;
@@ -30,19 +29,19 @@ function LinkItem({
   pathCheck,
   disabled = false,
 }: LinkItemProps) {
+  const location = useLocation();
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <Link
           to={to}
           className="flex h-9 w-full text-muted-foreground transition-colors hover:text-primary"
-          activeProps={{ className: "text-primary" }}
           disabled={disabled}
         >
           <div
             className={cn(
               "h-full w-[2px] left-0 top-0 bottom-0",
-              location.pathname === pathCheck ? "bg-current" : "bg-background"
+              location.pathname === pathCheck ? "bg-primary" : "bg-background"
             )}
           />
           <Icon className="h-5 w-12 m-auto text-inherit" />
@@ -61,19 +60,20 @@ function BottomLinkItem({
   pathCheck,
   disabled = false,
 }: LinkItemProps) {
+  const location = useLocation();
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <Link
           to={to}
           className="flex h-9 w-full text-muted-foreground transition-colors hover:text-primary"
-          activeProps={{ className: "text-primary" }}
           disabled={disabled}
         >
           <div
             className={cn(
               "h-full w-[3px] left-0 top-0 bottom-0",
-              location.pathname === pathCheck ? "bg-current" : "bg-background"
+              location.pathname === pathCheck ? "bg-primary" : "bg-background"
             )}
           />
           <Icon className="h-5 w-8 m-auto text-inherit" />
@@ -86,7 +86,7 @@ function BottomLinkItem({
 }
 
 export function Navbar(): JSX.Element {
-  const [isSettingsModalOpen, setSettingsModalOpen] = useState(false); // State to control modal
+  const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
 
   const openSettingsModal = () => setSettingsModalOpen(true);
   const closeSettingsModal = () => setSettingsModalOpen(false);
@@ -94,12 +94,12 @@ export function Navbar(): JSX.Element {
   return (
     <aside className="inset-y fixed left-0 z-20 flex h-full flex-col  bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="flex flex-col items-center gap-4 py-2">
-        <LinkItem to="/" icon={Home} label="Dashboard" pathCheck="/" />
+        <LinkItem to="/" icon={Home} label="Home" pathCheck="/" />
         <LinkItem
-          to="/help"
-          icon={Gamepad2}
-          label="Controls"
-          pathCheck="/help"
+          to="/dashboard"
+          icon={LayoutDashboard}
+          label="Dashboard"
+          pathCheck="/dashboard"
         />
         <LinkItem
           to="/logs"
@@ -119,12 +119,6 @@ export function Navbar(): JSX.Element {
           label="Status"
           pathCheck="/status"
         />
-        <LinkItem
-          to="/dashboard"
-          icon={Clipboard}
-          label="Dashboard"
-          pathCheck="/dashboard"
-        />
       </nav>
       <nav className="mt-auto grid gap-1 p-2">
         <BottomLinkItem
@@ -133,7 +127,6 @@ export function Navbar(): JSX.Element {
           label="Help"
           pathCheck="/help"
         />
-        {/* When clicking on this icon, open the SettingsModal */}
         <Tooltip>
           <TooltipTrigger asChild>
             <button
@@ -149,7 +142,6 @@ export function Navbar(): JSX.Element {
         </Tooltip>
       </nav>
 
-      {/* Render SettingsModal if the state is open */}
       {isSettingsModalOpen && (
         <SettingsModal
           isOpen={isSettingsModalOpen}
